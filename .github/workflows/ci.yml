@@ -11,5 +11,5 @@ jobs:
   call-spring-boot-build:
     uses: ./.github/workflows/reusable-spring-boot.yml
     with:
-      java-version: '21'   # Easily override Java version if needed
+      java-version: '17'   # Easily override Java version if needed
       maven-command: 'clean package'
