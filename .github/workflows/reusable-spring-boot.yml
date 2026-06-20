@@ -1,0 +1,54 @@
+name: Reusable Spring Boot CI
+
+# This trigger makes the workflow reusable
+on:
+  workflow_call:
+    inputs:
+      java-version:
+        description: 'The Java version to use'
+        required: false
+        type: string
+        default: '17'
+      maven-command:
+        description: 'The Maven command to execute'
+        required: false
+        type: string
+        default: 'clean verify'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Clone the repository code into the runner
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Set up Java JDK and cache Maven dependencies automatically
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: 'temurin' # Popular production-ready OpenJDK distro
+          cache: 'maven'         # Speeds up future runs by caching downloads
+
+      # 3. Make sure the Maven wrapper is executable (if using ./mvnw)
+      - name: Make maven wrapper executable
+        run: chmod +x ./mvnw
+        continue-on-error: true # Safe fallback if you use global 'mvn' instead
+
+      # 4. Run the Spring Boot build and tests
+      - name: Build with Maven
+        run: |
+          if [ -f "./mvnw" ]; then
+            ./mvnw ${{ inputs.maven-command }}
+          else
+            mvn ${{ inputs.maven-command }}
+          fi
+
+      # 5. Optional: Upload the built jar file as an artifact
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: spring-boot-app
+          path: target/*.jar
+          retention-days: 1

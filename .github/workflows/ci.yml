@@ -1,0 +1,15 @@
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # Call your reusable Spring Boot workflow
+  call-spring-boot-build:
+    uses: ./.github/workflows/reusable-spring-boot.yml
+    with:
+      java-version: '21'   # Easily override Java version if needed
+      maven-command: 'clean package'
