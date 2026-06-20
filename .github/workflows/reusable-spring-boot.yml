@@ -31,6 +31,9 @@ jobs:
           distribution: 'temurin' # Popular production-ready OpenJDK distro
           cache: 'maven'         # Speeds up future runs by caching downloads
 
+      - name: Print Java Version
+        run: java -version
+        
       # 3. Make sure the Maven wrapper is executable (if using ./mvnw)
       - name: Make maven wrapper executable
         run: chmod +x ./mvnw
